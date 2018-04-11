@@ -173,6 +173,8 @@
                         <compilerVersion>1.8</compilerVersion>
                         <source>1.8</source>
                         <target>1.8</target>
+                        <!-- http://www.akazlou.com/posts/2018-02-08-journey-spring-boot-upgrade.html -->
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
