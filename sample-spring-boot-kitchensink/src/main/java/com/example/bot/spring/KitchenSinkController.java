@@ -42,8 +42,6 @@ import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
@@ -64,12 +62,6 @@ import java.util.function.Consumer;
 public class KitchenSinkController {
     @Autowired
     private LineMessagingClient lineMessagingClient;
-
-    @ResponseBody
-    @GetMapping("/test")
-    public String test() {
-        return "hello world!!";
-    }
 
     @EventMapping
     public void handleTextMessageEvent(MessageEvent<TextMessageContent> event) throws Exception {
