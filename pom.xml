@@ -18,6 +18,10 @@
         <module>sample-spring-boot-kitchensink</module>
     </modules>
 
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
