@@ -16,6 +16,7 @@
         <module>line-bot-spring-boot</module>
         <module>sample-spring-boot-echo</module>
         <module>sample-spring-boot-kitchensink</module>
+        <module>RSP</module>
     </modules>
 
     <properties>

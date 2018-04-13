@@ -18,6 +18,11 @@
             <groupId>com.linecorp.bot</groupId>
             <artifactId>line-bot-spring-boot</artifactId>
         </dependency>
+        <dependency>
+            <groupId>RockScissorPaper</groupId>
+            <artifactId>RSP</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
