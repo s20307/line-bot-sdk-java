@@ -1,6 +1,9 @@
+package com.naver.rsp;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -8,6 +11,7 @@ import java.io.File;
 @Slf4j
 public class Foo {
 
+    @Ignore
     @SneakyThrows
     @Test
     public void test() {

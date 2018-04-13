@@ -1,3 +1,5 @@
+package com.naver.rsp;
+
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
 import org.opencv.core.Mat;
