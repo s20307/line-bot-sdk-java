@@ -94,12 +94,12 @@ public class KitchenSinkController {
                 responseBody -> {
                     DownloadedContent jpg = saveContent("jpg", responseBody);
                     DownloadedContent previewImg = createTempFile("jpg");
-                    system(
-                            "convert",
-                            "-resize", "240x",
-                            jpg.path.toString(),
-                            previewImg.path.toString());
-                    reply(((MessageEvent) event).getReplyToken(),
+//                    system(
+//                            "convert",
+//                            "-resize", "240x",
+//                            jpg.path.toString(),
+//                            previewImg.path.toString());
+                    reply(event.getReplyToken(),
                           new ImageMessage(jpg.getUri(), jpg.getUri()));
                 });
     }
