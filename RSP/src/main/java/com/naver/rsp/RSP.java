@@ -11,7 +11,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Slf4j
 public class RSP {
@@ -42,15 +43,15 @@ public class RSP {
         log.debug("[[[ RSP is Ready!! ]]]\n\n\n");
     }
 
-    public static File run(String sourcePath) {
+    public static Path run(String sourcePath) {
         FileInfo fileInfo = new FileInfo(sourcePath);
         log.debug("source: {}, destination: {}", fileInfo.getSourcePath(), fileInfo.getDestinationPath());
 
         writeImage(fileInfo.getSourcePath(), fileInfo.getDestinationPath());
 
-        File file = new File(fileInfo.getDestinationPath());
+        Path path = Paths.get(fileInfo.getDestinationPath());
         log.debug("{}", "======================================PROCESS END======================================");
-        return file;
+        return path;
     }
 
     private static void writeImage(String inputFilename, String outputFilename) {
