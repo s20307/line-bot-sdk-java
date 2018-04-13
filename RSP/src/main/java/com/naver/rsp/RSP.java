@@ -1,8 +1,8 @@
 package com.naver.rsp;
 
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
+import org.apache.commons.io.FilenameUtils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -36,12 +36,7 @@ public class RSP {
         OpenCV.loadShared();
         log.debug("[OpenCV Loaded]");
 
-        FACE_DETECTOR = new CascadeClassifier();
-        boolean faceDetctorLoaded = FACE_DETECTOR.load(FINDER.getClassPathResource(CASCADE_FILE_PATH));
-        if (!faceDetctorLoaded) {
-            log.error("{}", "Failed to load detector");
-            throw new RuntimeException("Failed to load detector");
-        }
+        FACE_DETECTOR = new CascadeClassifier(FINDER.getClassPathResource(CASCADE_FILE_PATH));
 
         sticker = Imgcodecs.imread(FINDER.getClassPathResource(ROCK_SCISSORS_PAPER));
         log.debug("가위바위보 이미지 로드");
@@ -53,12 +48,12 @@ public class RSP {
     }
 
     public static Path run(String sourcePath) {
-        FileInfo fileInfo = new FileInfo(sourcePath);
-        log.debug("source: {}, destination: {}", fileInfo.getSourcePath(), fileInfo.getDestinationPath());
+        String destinationPath = FilenameUtils.getFullPath(sourcePath) + FilenameUtils.getBaseName(sourcePath) + "_result." + FilenameUtils.getExtension(sourcePath);
+        log.debug("source: {}, destination: {}", sourcePath, destinationPath);
 
-        writeImage(fileInfo.getSourcePath(), fileInfo.getDestinationPath());
+        writeImage(sourcePath, destinationPath);
 
-        Path path = Paths.get(fileInfo.getDestinationPath());
+        Path path = Paths.get(destinationPath);
         log.debug("{}", "======================================PROCESS END======================================");
         return path;
     }
@@ -109,36 +104,6 @@ public class RSP {
         scaledSticker.release();
         croppedMask.release();
         scaledMask.release();
-    }
-
-    @Value
-    static class FileInfo {
-        //=> /home/hdm/project/RSP/images/test1.jpg
-        private String sourcePath;
-
-        public String getPrefixFilePath() {
-            //=> /home/hdm/project/RSP/images
-            return sourcePath.substring(0, sourcePath.lastIndexOf("/"));
-        }
-
-        public String getFileName() {
-            String fileFullName = extractFileName();
-            return fileFullName.substring(0, fileFullName.lastIndexOf("."));
-        }
-
-        public String getFileExtension() {
-            String fileFullName = extractFileName();
-            return fileFullName.substring(fileFullName.lastIndexOf("."));
-        }
-
-        public String getDestinationPath() {
-            String destinationPath = getPrefixFilePath() + getFileName() + "_result" + getFileExtension();
-            return destinationPath;
-        }
-
-        private String extractFileName() {
-            return sourcePath.substring(sourcePath.lastIndexOf("/"));
-        }
     }
 
 }
