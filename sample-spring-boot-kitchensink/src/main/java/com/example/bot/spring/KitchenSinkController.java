@@ -432,6 +432,19 @@ public class KitchenSinkController {
         }
     }
 
+    private static DownloadedContent saveContent2(String ext, MessageContentResponse responseBody) {
+        log.info("Got content-type: {}", responseBody);
+
+        DownloadedContent tempFile = createTempFile(ext);
+        try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
+            ByteStreams.copy(responseBody.getStream(), outputStream);
+            log.info("Saved {}: {}", ext, tempFile);
+            return tempFile;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     private static DownloadedContent createTempFile(String ext) {
         String fileName = LocalDateTime.now().toString() + '-' + UUID.randomUUID().toString() + '.' + ext;
         Path tempFile = KitchenSinkApplication.downloadedContentDir.resolve(fileName);

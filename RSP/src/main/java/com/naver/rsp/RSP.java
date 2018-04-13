@@ -1,5 +1,6 @@
 package com.naver.rsp;
 
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
 import org.opencv.core.Mat;
@@ -38,33 +39,17 @@ public class RSP {
         sticker_mask = Imgcodecs.imread(FINDER.getClassPathResource(ROCK_SCISSORS_PAPER_MASK));
         log.debug("가위바위보 마스크 이미지 로드");
 
-        log.debug("======================================RSP is Ready!!======================================");
+        log.debug("[[[ RSP is Ready!! ]]]\n\n\n");
     }
 
-    public static File run(File srcFile) {
-        //=> /home/hdm/project/RSP/images/test1.jpg
-        String fullPath = srcFile.getAbsolutePath();
-        log.debug("fullPath: {}", fullPath);
+    public static File run(String sourcePath) {
+        FileInfo fileInfo = new FileInfo(sourcePath);
+        log.debug("source: {}, destination: {}", fileInfo.getSourcePath(), fileInfo.getDestinationPath());
 
-        //=> /home/hdm/project/RSP/images
-        String filePath = fullPath.substring(0, fullPath.lastIndexOf("/"));
-        log.debug("filePath: {}", filePath);
+        writeImage(fileInfo.getSourcePath(), fileInfo.getDestinationPath());
 
-        String fileFullName = srcFile.getName();
-        log.debug("fileFullName: {}", fileFullName);
-
-        String fileName = fileFullName.substring(0, fileFullName.lastIndexOf("."));
-        log.debug("fileName: {}", fileName);
-
-        String fileExtention = fileFullName.substring(fileFullName.lastIndexOf("."));
-        log.debug("fileExtention: {}", fileExtention);
-
-        String outputFilePath = filePath + "/" + fileName + "_result" + fileExtention;
-        log.debug("outputFilePath: {}", outputFilePath);
-
-        writeImage(fullPath, outputFilePath);
-
-        File file = new File(outputFilePath);
+        File file = new File(fileInfo.getDestinationPath());
+        log.debug("{}", "======================================PROCESS END======================================");
         return file;
     }
 
@@ -121,4 +106,35 @@ public class RSP {
         croppedMask.release();
         scaledMask.release();
     }
+
+    @Value
+    static class FileInfo {
+        //=> /home/hdm/project/RSP/images/test1.jpg
+        private String sourcePath;
+
+        public String getPrefixFilePath() {
+            //=> /home/hdm/project/RSP/images
+            return sourcePath.substring(0, sourcePath.lastIndexOf("/"));
+        }
+
+        public String getFileName() {
+            String fileFullName = extractFileName();
+            return fileFullName.substring(0, fileFullName.lastIndexOf("."));
+        }
+
+        public String getFileExtension() {
+            String fileFullName = extractFileName();
+            return fileFullName.substring(fileFullName.lastIndexOf("."));
+        }
+
+        public String getDestinationPath() {
+            String destinationPath = getPrefixFilePath() + getFileName() + "_result" + getFileExtension();
+            return destinationPath;
+        }
+
+        private String extractFileName() {
+            return sourcePath.substring(sourcePath.lastIndexOf("/"));
+        }
+    }
+
 }
