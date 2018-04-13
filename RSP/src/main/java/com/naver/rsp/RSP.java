@@ -19,6 +19,8 @@ public class RSP {
 
     private static final ResourcePathFinder FINDER = new ResourcePathFinder();
 
+    private static CascadeClassifier FACE_DETECTOR;
+
     private static final String CASCADE_FILE_PATH = "lbpcascades/lbpcascade_frontalface.xml";
     private static final String ROCK_SCISSORS_PAPER = "assets/rock_scissors_paper.png";
     private static final String ROCK_SCISSORS_PAPER_MASK = "assets/rock_scissors_paper_mask.png";
@@ -33,6 +35,13 @@ public class RSP {
     private static void init() {
         OpenCV.loadShared();
         log.debug("[OpenCV Loaded]");
+
+        FACE_DETECTOR = new CascadeClassifier();
+        boolean faceDetctorLoaded = FACE_DETECTOR.load(FINDER.getClassPathResource(CASCADE_FILE_PATH));
+        if (!faceDetctorLoaded) {
+            log.error("{}", "Failed to load detector");
+            throw new RuntimeException("Failed to load detector");
+        }
 
         sticker = Imgcodecs.imread(FINDER.getClassPathResource(ROCK_SCISSORS_PAPER));
         log.debug("가위바위보 이미지 로드");
@@ -57,14 +66,8 @@ public class RSP {
     private static void writeImage(String inputFilename, String outputFilename) {
         Mat img = Imgcodecs.imread(inputFilename);
 
-        CascadeClassifier faceDetector = new CascadeClassifier();
-        if (!faceDetector.load(FINDER.getClassPathResource(CASCADE_FILE_PATH))) {
-            log.error("{}", "Failed to load detector");
-            return;
-        }
-
         MatOfRect faceDetections = new MatOfRect();
-        faceDetector.detectMultiScale(img, faceDetections);
+        FACE_DETECTOR.detectMultiScale(img, faceDetections);
         log.debug("The number of face: {}", faceDetections.size());
 
         for (Rect rect : faceDetections.toArray()) {
