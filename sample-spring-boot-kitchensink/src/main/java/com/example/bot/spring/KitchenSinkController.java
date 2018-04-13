@@ -38,6 +38,7 @@ import com.linecorp.bot.model.message.template.*;
 import com.linecorp.bot.model.response.BotApiResponse;
 import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
+import com.naver.rsp.RSP;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -92,13 +93,8 @@ public class KitchenSinkController {
                 event.getReplyToken(),
                 event.getMessage().getId(),
                 responseBody -> {
-                    DownloadedContent jpg = saveContent("jpg", responseBody);
-                    DownloadedContent previewImg = createTempFile("jpg");
-//                    system(
-//                            "convert",
-//                            "-resize", "240x",
-//                            jpg.path.toString(),
-//                            previewImg.path.toString());
+                    //DownloadedContent jpg = saveContent("jpg", responseBody);
+                    DownloadedContent jpg = saveContentAndFilterImage("jpg", responseBody);
                     reply(event.getReplyToken(),
                           new ImageMessage(jpg.getUri(), jpg.getUri()));
                 });
@@ -432,17 +428,13 @@ public class KitchenSinkController {
         }
     }
 
-    private static DownloadedContent saveContent2(String ext, MessageContentResponse responseBody) {
-        log.info("Got content-type: {}", responseBody);
+    private static DownloadedContent saveContentAndFilterImage(String ext, MessageContentResponse responseBody) {
+        DownloadedContent tempFile = saveContent(ext, responseBody);
 
-        DownloadedContent tempFile = createTempFile(ext);
-        try (OutputStream outputStream = Files.newOutputStream(tempFile.path)) {
-            ByteStreams.copy(responseBody.getStream(), outputStream);
-            log.info("Saved {}: {}", ext, tempFile);
-            return tempFile;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        Path filteredImagePath = RSP.run(tempFile.path.toString());
+        return new DownloadedContent(
+                filteredImagePath,
+                createUri("/downloaded/" + filteredImagePath.getFileName()));
     }
 
     private static DownloadedContent createTempFile(String ext) {
