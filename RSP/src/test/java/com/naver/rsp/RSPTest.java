@@ -10,7 +10,7 @@ public class RSPTest {
 
     @Test
     public void test() {
-        File resFile = RSP.run("images/lenna.png");
+        File res0 = RSP.run("images/lenna.png");
 
         File res1 = RSP.run("images/test1.jpg");
 
